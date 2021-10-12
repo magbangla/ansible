@@ -1,0 +1,10 @@
+[Unit]
+Description=ara container
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/podman start -a {{ara_configs['container_name']}}
+ExecStop=/usr/bin/podman stop -t 2 {{ara_configs['container_name']}}
+User={{user_curent}}
+[Install]
+WantedBy=local.target

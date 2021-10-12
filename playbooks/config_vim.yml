@@ -1,0 +1,5 @@
+- name: install Vundle for a specific user
+  hosts: localhost
+
+  roles: 
+    - vim_config

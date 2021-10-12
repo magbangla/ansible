@@ -1,0 +1,12 @@
+---
+- name: download the color scheme from git
+  ansible.builtin.git:
+    repo: "{{ vim_color_scheme }}"
+    dest: "{{ vim_folder }}/colorscheme"
+  when: False
+
+- name: add a color scheme in .vimrc folder
+  ansible.builtin.lineinfile:
+    path: "{{ vimrc_file_path }}"
+    line: "colorscheme {{ active_color_scheme }}"
+    insertbefore: BOF

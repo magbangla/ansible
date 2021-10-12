@@ -1,0 +1,109 @@
+---
+
+# tasks file for ara-manage
+# - mame: install podman 
+#   ansible.builtin.dnf:
+#     name: podman
+#     state: latest
+#   become: True
+#   tag:
+#     - install_podman
+- name: set curent user fact
+  ansible.builtin.set_fact:
+    user_curent: "{{ lookup('env', 'USER') }}"
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ ara_configs['ara_folder'] }}"
+    state: directory
+    mode: '0755'
+    recurse: yes
+    owner: "{{ user_curent }}"
+    group: "{{ user_curent }}"
+  become: true
+
+- name: verify if ara container is running
+  ansible.builtin.shell: "podman ps | grep -i ara-server"
+  ignore_errors: True
+  register: output
+
+- debug: 
+    var: output
+
+- name: set dont run fact 
+  ansible.builtin.set_fact:
+    dont_run: False
+  when: output.stdout == ""
+
+- name: verify if ara container exist and stoped
+  ansible.builtin.shell: "podman images | grep -i ara-api"
+  ignore_errors: True
+  register: ara_img_output
+
+- debug: 
+    var: ara_img_output
+
+- name: set dont run fact 
+  ansible.builtin.set_fact:
+    dont_run: False
+  when: ara_img_output.rc == 0
+
+- name: Run ara container
+  ansible.builtin.shell: |
+    podman run --name {{ ara_configs['container_name'] }} --detach --tty \
+    --volume {{ ara_configs['ara_folder'] }}:/opt/ara:z -p {{ ara_configs['ara_port'] }}:8000 \
+    {{ ara_configs['image'] }}
+  when: dont_run
+
+- name: copy ara.service to systemd/system folder
+  ansible.builtin.template:
+    src: ara.service.j2
+    dest: /etc/systemd/system/ara.service
+    owner: "{{ user_curent }}"
+    group: "{{ user_curent }}"
+    mode: '0644'
+  become : True
+  notify: daemon_reload
+
+- name: Enable service ara.service and ensure it is not masked
+  ansible.builtin.systemd:
+    name: ara.service
+    enabled: yes
+    masked: no
+  become: true
+
+- name: Enable service ara.service and ensure it is not masked
+  ansible.builtin.systemd:
+    name: ara.service
+    state: started
+    masked: no
+  become: true
+
+- name: Install ara python package
+  pip:
+    name: "{{ pip_package }}"
+  loop:
+    - ara
+    - ansible
+  loop_control:
+    loop_var: pip_package
+
+- name: get ara callback plugins
+  ansible.builtin.shell: echo $(python3 -m ara.setup.callback_plugins)
+  register: cbplugin
+
+- debug: 
+    var: cbplugin.stdout
+
+- name: add var to ~/.bashrc
+  ansible.builtin.lineinfile:
+    path: ~/.bashrc
+    line: "{{ item }}"
+  loop:
+    - export ANSIBLE_CALLBACK_PLUGINS="$(python3 -m ara.setup.callback_plugins)"
+    - export ARA_API_CLIENT="http"
+    - export ARA_API_SERVER="http://127.0.0.1:8000"
+  when: create_ara_vars
+
+- name: source bash
+  ansible.builtin.shell: source ~/.bashrc

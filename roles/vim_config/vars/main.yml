@@ -1,0 +1,61 @@
+---
+with_vundle: True
+with_plug: False
+# vars file for vundle
+color_scheme_path: ""
+vimrc_file_path: ~/.vimrc
+vim_folder: ~/.vim
+vim_color_scheme: https://github.com/flazz/vim-colorschemes.git
+active_color_scheme: desert
+vundle_configs:
+  manager: Vundle
+  package_path: https://github.com/VundleVim/Vundle.vim.git
+  binary_path: ~/.vim/bundle/Vundle.vim
+
+plug_configs:
+  manager: Plug
+  package_path: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  binary_path: ~/.vim/autoload/plug.vim
+initial_setup: |
+  "   This is the personal .vimrc file of Nickson Kaigi. 
+  "   While much of it is beneficial for general use, I would
+  "   recommend picking out the parts you want and understand,
+  "   as I have done from other notable vim purists
+  "   Updated 5/1/2019 - on Ubuntu 18.04
+  "
+  set nocompatible  "Use Vim settings, rather than Vi settings
+  "Be IMproved
+  filetype off  "required!
+
+vundle_plugins:
+  - name: VIM-ANSIBLE-YAML
+    path: "chase/vim-ansible-yaml"
+    command: Plugin
+    options: ""
+
+  - name: VIM-INDENT-GUIDE
+    path: "nathanaelkane/vim-indent-guides"
+    command: Plugin
+    options: |
+      let g:indent_guides_enable_on_vim_startup = 1
+      let g:indent_guides_auto_colors = 0
+      let g:indent_guides_start_level = 2
+      let g:indent_guides_guide_size = 1
+      autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=3
+      autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=4
+
+  - name: VIM-COLORSCHEMES
+    path: "flazz/vim-colorschemes"
+    command: Plugin
+    options: ""
+
+  - name: VIM-POLYGLOT
+    path: "sheerun/vim-polyglot"
+    command: Plugin
+    options: ""
+
+plug_plugins:
+  - name: VIM-EASY_ALIGN
+    path: "junegunn/vim-easy-align"
+    command: Plug
+    options: ""

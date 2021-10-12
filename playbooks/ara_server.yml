@@ -1,0 +1,5 @@
+- name: install and run ara server on localhost
+  hosts: localhost
+
+  roles: 
+    - ara-manage

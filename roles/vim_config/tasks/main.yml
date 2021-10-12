@@ -1,0 +1,10 @@
+---
+# tasks file for vundle
+- name: include all task file
+  include_tasks: "{{ tasks_files }}.yml"
+  loop:
+    - "preparetasks"
+    - "package-manager"
+    - "colorscheme"
+  loop_control: 
+    loop_var: tasks_files

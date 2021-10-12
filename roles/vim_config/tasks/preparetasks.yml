@@ -1,0 +1,24 @@
+---
+- name: set user_name var
+  ansible.builtin.set_fact:
+    user_name: "{{ lookup('env', 'USER') }}"
+    cacheable: yes
+
+- name: create if not exist .vim folder
+  ansible.builtin.file:
+    path: "{{ vim_folder }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+
+- name: verify that .vim folder exist
+  stat:
+    path: "{{ vim_folder }}"
+  register: vim_folder_result
+
+- name: assert that .vim folder exist
+  assert:
+    that:
+      - vim_folder_result.stat.exists and vim_folder_result.stat.isdir
+    msg: ".vim folder does not exist. shoul be created before continue"

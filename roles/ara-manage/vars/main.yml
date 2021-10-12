@@ -1,0 +1,17 @@
+---
+# vars file for ara-manage
+create_ara_vars: false
+ara_configs:
+  image: docker.io/recordsansible/ara-api
+  tag: latest
+  ara_folder: /opt/araserver
+  ara_port: 8000
+  container_name: ara-server
+
+os_environment:
+  - key: ANSIBLE_CALLBACK_PLUGINS
+    value : /home/martial/.local/lib/python3.9/site-packages/ara/plugins/callback
+  - key: ARA_API_CLIENT
+    value : "http"
+  - key: ARA_API_SERVER
+    value : "http://127.0.0.1:8000"

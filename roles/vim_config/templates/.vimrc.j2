@@ -1,0 +1,26 @@
+set background=dark
+set ts=4 sw=4 et
+
+{{initial_setup}}
+
+" set the runtime path to include Vundle and initialize
+{% if with_vundle %}
+      set rtp+=~/.vim/bundle/Vundle.vim
+      call vundle#begin()
+
+      {% for plugin in vundle_plugins %}
+            {{plugin['command']}} '{{plugin['path']}}'
+            {{plugin['options']}}
+      {% endfor %}
+
+      call vundle#end()    " required
+{% endif %}
+
+{% if with_plug %}
+      call plug#begin('~/.vim/plugged')
+      {% for plugin in plug_plugins %}
+            {{plugin['command']}} '{{plugin['path']}}'
+            {{plugin['options']}}
+      {% endfor %}
+      call plug#end()
+{% endif %}

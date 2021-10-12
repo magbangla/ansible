@@ -1,0 +1,76 @@
+---
+
+- name: debug user_name variable
+  debug:
+    msg: playbook is running with the user named {{ user_name }}
+
+- name: setup vim with vundle 
+  block:
+    - name: Update yum cache
+      yum: update_cache=yes
+
+    - name: Ansible check if vundle folder exist.
+      stat:
+        path: "{{ vundle_configs['binary_path'] }}"
+      register: vundle_folder
+
+    - name: Clone a Vundle repo in seprate directory
+      ansible.builtin.git:
+        repo: "{{ vundle_configs['package_path'] }}"
+        dest: "{{ vundle_configs['binary_path'] }}"
+      when: vundle_folder.stat.exists == False
+    #    separate_git_dir: /src/ansible-examples.git
+
+    - name: create .vimrc file
+      ansible.builtin.template:
+        src: .vimrc.j2
+        dest: "{{ vimrc_file_path }}"
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: '0644'  
+
+    - name: Ansible check if .vimrc file exists.
+      stat:
+        path: "{{ vimrc_file_path }}"
+      register: p
+
+    - name: install vim plugin with Vundle
+      ansible.builtin.shell: "vim +PluginInstall +qall"
+      when: p.stat.exists
+
+  when: with_vundle | bool
+  
+- name: setup vim with Plug
+  block:
+    - name: Update yum cache
+      yum: update_cache=yes
+
+    - name: Ansible check if vundle folder exist.
+      stat:
+        path: "{{ plug_configs['binary_path'] }}"
+      register: plug_folder
+
+    - name: Clone a Plug repo in seprate directory
+      ansible.builtin.shell: |
+        curl -fLo {{ plug_configs['binary_path'] }} --create-dirs {{ plug_configs['package_path'] }}
+      when: plug_folder.stat.exists == False
+    #    separate_git_dir: /src/ansible-examples.git
+
+    - name: create .vimrc file
+      ansible.builtin.template:
+        src: .vimrc.j2
+        dest: "{{ vimrc_file_path }}"
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: '0644'  
+
+    - name: Ansible check if .vimrc file exists.
+      stat:
+        path: "{{ vimrc_file_path }}"
+      register: p
+
+    - name: install vim plugin with Vundle
+      ansible.builtin.shell: "vim +PluginInstall +qall"
+      when: p.stat.exists
+
+  when: with_plug | bool
