@@ -10,7 +10,7 @@
     state: directory
     recurse: yes
     owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    group: "{{ user_group }}"
 
 - name: verify that .vim folder exist
   stat:

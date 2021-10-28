@@ -1,6 +1,7 @@
 ---
 with_vundle: True
 with_plug: False
+user_group: "staff"
 # vars file for vundle
 color_scheme_path: ""
 vimrc_file_path: ~/.vimrc

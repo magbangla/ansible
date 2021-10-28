@@ -6,8 +6,8 @@
 
 - name: setup vim with vundle 
   block:
-    - name: Update yum cache
-      yum: update_cache=yes
+    # - name: Update yum cache
+    #   yum: update_cache=yes
 
     - name: Ansible check if vundle folder exist.
       stat:
@@ -26,7 +26,7 @@
         src: .vimrc.j2
         dest: "{{ vimrc_file_path }}"
         owner: "{{ user_name }}"
-        group: "{{ user_name }}"
+        group: "{{ user_group }}"
         mode: '0644'  
 
     - name: Ansible check if .vimrc file exists.
@@ -61,7 +61,7 @@
         src: .vimrc.j2
         dest: "{{ vimrc_file_path }}"
         owner: "{{ user_name }}"
-        group: "{{ user_name }}"
+        group: "{{ user_group }}"
         mode: '0644'  
 
     - name: Ansible check if .vimrc file exists.
